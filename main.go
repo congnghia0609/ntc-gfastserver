@@ -41,7 +41,7 @@ func initLogger() {
 	})
 }
 
-// increaseLimit increase resources limitations: ulimit -a
+// increaseLimit increase resources limitations: ulimit -aH
 func increaseLimit() {
 	var rlimit syscall.Rlimit
 	if err := syscall.Getrlimit(syscall.RLIMIT_NOFILE, &rlimit); err != nil {

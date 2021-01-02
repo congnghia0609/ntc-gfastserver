@@ -14,4 +14,5 @@ go get -u github.com/natefinch/lumberjack
 go get -u github.com/satori/go.uuid
 go get -u github.com/valyala/fasthttp
 go get -u github.com/fasthttp/router
+go get -u go.mongodb.org/mongo-driver
 echo "Install dependencies complete..."

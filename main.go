@@ -7,13 +7,13 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	_ "net/http/pprof"
-	"ntc-gfastserver/post"
+	"ntc-gfastserver/mdb"
 	"path/filepath"
 	"runtime"
+	"sync"
 	"syscall"
 
 	"github.com/congnghia0609/ntc-gconf/nconf"
@@ -124,12 +124,34 @@ func main() {
 	// fmt.Println(string(bp))
 
 	// 3. Get all post
-	p := post.GetAllPost()
-	bp, err := json.Marshal(p)
-	if err != nil {
-		fmt.Println(err)
+	// p := post.GetAllPost()
+	// bp, err := json.Marshal(p)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// fmt.Println(string(bp))
+
+	// 4. gen id
+	// id, _ := mdb.Next("ddd")
+	// log.Println("id gen:", id)
+
+	// 5. Benchmark nid gen
+	wg := new(sync.WaitGroup)
+	wg.Add(100)
+	for i := 0; i < 100; i++ {
+		go func() {
+			for j := 0; j < 100; j++ {
+				n, err := mdb.Next("benchmark")
+				if err != nil {
+					panic(err)
+				}
+				fmt.Println(n)
+			}
+			wg.Done()
+			fmt.Println("Done!!!")
+		}()
 	}
-	fmt.Println(string(bp))
+	wg.Wait()
 
 	log.Println("################# End Main #################")
 }

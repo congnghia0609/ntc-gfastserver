@@ -14,6 +14,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Const
+const (
+	DbName = "fastdb"
+)
+
 // GetClient return mongo client
 // https://pkg.go.dev/go.mongodb.org/mongo-driver/mongo#Connect
 func GetClient() *mongo.Client {

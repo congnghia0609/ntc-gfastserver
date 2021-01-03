@@ -7,15 +7,19 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	_ "net/http/pprof"
+	"ntc-gfastserver/post"
 	"path/filepath"
 	"runtime"
 	"syscall"
+	"time"
 
 	"github.com/congnghia0609/ntc-gconf/nconf"
 	"github.com/natefinch/lumberjack"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // initNConf init file config
@@ -97,6 +101,20 @@ func main() {
 	}
 
 	// Code test here.
+	p := post.Post{
+		ID:        primitive.NewObjectID(),
+		Title:     "title1",
+		Body:      "body1",
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+	id := post.InsertPost(p)
+	fmt.Println("id:", id)
+	bp, err := json.Marshal(p)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(bp))
 
 	log.Println("################# End Main #################")
 }

@@ -15,11 +15,9 @@ import (
 	"path/filepath"
 	"runtime"
 	"syscall"
-	"time"
 
 	"github.com/congnghia0609/ntc-gconf/nconf"
 	"github.com/natefinch/lumberjack"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // initNConf init file config
@@ -101,15 +99,32 @@ func main() {
 	}
 
 	// Code test here.
-	p := post.Post{
-		ID:        primitive.NewObjectID(),
-		Title:     "title1",
-		Body:      "body1",
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}
-	id := post.InsertPost(p)
-	fmt.Println("id:", id)
+	// 1. Insert
+	// p := post.Post{
+	// 	ID:        1,
+	// 	Title:     "title1",
+	// 	Body:      "body1",
+	// 	CreatedAt: time.Now(),
+	// 	UpdatedAt: time.Now(),
+	// }
+	// err := post.InsertPost(p)
+	// fmt.Println("err:", err)
+	// bp, err := json.Marshal(p)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// fmt.Println(string(bp))
+
+	// 2. Get post
+	// p := post.GetPost(3)
+	// bp, err := json.Marshal(p)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// fmt.Println(string(bp))
+
+	// 3. Get all post
+	p := post.GetAllPost()
 	bp, err := json.Marshal(p)
 	if err != nil {
 		fmt.Println(err)

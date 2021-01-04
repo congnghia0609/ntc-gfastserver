@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Const
@@ -43,6 +44,43 @@ func InsertPost(post Post) error {
 		return err
 	}
 	return nil
+}
+
+// UpdatePost update Post
+func UpdatePost(post Post) (int64, error) {
+	client := mdb.GetClient()
+	defer mdb.Close(client)
+	collection := client.Database(mdb.DbName).Collection(TablePost)
+	filter := bson.D{{"_id", post.ID}}
+	opts := options.Replace().SetUpsert(true)
+	updateResult, err := collection.ReplaceOne(context.Background(), filter, post, opts)
+	if err != nil {
+		fmt.Println("Error update post with updateResult:", updateResult)
+		log.Println(err)
+		return 0, err
+	}
+	return updateResult.ModifiedCount, nil
+}
+
+// DeletePost delete Post
+func DeletePost(id int64) (int64, error) {
+	client := mdb.GetClient()
+	defer mdb.Close(client)
+	collection := client.Database(mdb.DbName).Collection(TablePost)
+	filter := bson.D{{"_id", id}}
+	// specify the SetCollation option to provide a collation that will ignore case for string comparisons
+	opts := options.Delete().SetCollation(&options.Collation{
+		Locale:    "en_US",
+		Strength:  1,
+		CaseLevel: false,
+	})
+	deleteResult, err := collection.DeleteOne(context.Background(), filter, opts)
+	if err != nil {
+		fmt.Println("Error update post with deleteResult:", deleteResult)
+		log.Println(err)
+		return 0, err
+	}
+	return deleteResult.DeletedCount, nil
 }
 
 // GetPost get post

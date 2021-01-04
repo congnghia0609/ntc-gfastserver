@@ -37,7 +37,7 @@ func Next(id string) (int64, error) {
 	filter := bson.D{{"_id", id}}
 	update := bson.D{{"$inc", bson.D{{"seq", 1}}}}
 
-	err := collection.FindOneAndUpdate(context.TODO(), filter, update, opts).Decode(&nid)
+	err := collection.FindOneAndUpdate(context.Background(), filter, update, opts).Decode(&nid)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return 1, nil
@@ -49,4 +49,23 @@ func Next(id string) (int64, error) {
 	// log.Println("nid:", nid)
 
 	return nid.Seq + 1, nil
+}
+
+// ResetID reset id gen to value
+func ResetID(id string, value int64) (int64, error) {
+	client := GetClient()
+	defer Close(client)
+	collection := client.Database(DbName).Collection(TableNId)
+
+	opts := options.Update().SetUpsert(true)
+	filter := bson.D{{"_id", id}}
+	update := bson.D{{"$set", bson.D{{"seq", value}}}}
+
+	result, err := collection.UpdateOne(context.Background(), filter, update, opts)
+	if err != nil {
+		return 0, err
+	}
+	// log.Println("nid:", nid)
+
+	return result.MatchedCount, nil
 }

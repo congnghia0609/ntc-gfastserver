@@ -134,8 +134,8 @@ func main() {
 // 	// fmt.Println(string(bp))
 
 // 	// 4. gen id
-// 	// id, _ := mdb.Next("ddd")
-// 	// log.Println("id gen:", id)
+// 	id, _ := mdb.Next("aaa")
+// 	log.Println("id gen:", id)
 
 // 	// 5. Benchmark nid gen
 // 	// wg := new(sync.WaitGroup)
@@ -154,6 +154,10 @@ func main() {
 // 	// 	}()
 // 	// }
 // 	// wg.Wait()
+
+// 	// 6. Reset id gen
+// 	// count, _ := mdb.ResetID("aaa", 0)
+// 	// log.Println("resetid count:", count)
 
 // 	log.Println("################# End Main #################")
 // }

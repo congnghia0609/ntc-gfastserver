@@ -76,7 +76,7 @@ func DeletePost(id int64) (int64, error) {
 	})
 	deleteResult, err := collection.DeleteOne(context.Background(), filter, opts)
 	if err != nil {
-		fmt.Println("Error update post with deleteResult:", deleteResult)
+		fmt.Println("Error delete post with deleteResult:", deleteResult)
 		log.Println(err)
 		return 0, err
 	}

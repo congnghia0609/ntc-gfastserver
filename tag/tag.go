@@ -62,7 +62,7 @@ func UpdateTag(tag Tag) (int64, error) {
 }
 
 // DeleteTag delete Tag
-func DeleteTag(id int64) (int64, error) {
+func DeleteTag(id primitive.ObjectID) (int64, error) {
 	client := mdb.GetClient()
 	defer mdb.Close(client)
 	collection := client.Database(mdb.DbName).Collection(TableTag)
@@ -75,7 +75,7 @@ func DeleteTag(id int64) (int64, error) {
 	})
 	deleteResult, err := collection.DeleteOne(context.Background(), filter, opts)
 	if err != nil {
-		fmt.Println("Error update tag with deleteResult:", deleteResult)
+		fmt.Println("Error delete tag with deleteResult:", deleteResult)
 		log.Println(err)
 		return 0, err
 	}
@@ -84,7 +84,7 @@ func DeleteTag(id int64) (int64, error) {
 
 // GetTag get tag
 // https://pkg.go.dev/go.mongodb.org/mongo-driver/mongo#pkg-overview
-func GetTag(id int64) Tag {
+func GetTag(id primitive.ObjectID) *Tag {
 	var tag Tag
 	client := mdb.GetClient()
 	defer mdb.Close(client)
@@ -93,8 +93,9 @@ func GetTag(id int64) Tag {
 	err := collection.FindOne(context.Background(), filter).Decode(&tag)
 	if err != nil {
 		log.Println(err)
+		return nil
 	}
-	return tag
+	return &tag
 }
 
 // GetAllTag get all tag

@@ -56,6 +56,12 @@ func StartWebServer(name string) {
 	r.POST("/post", handler.AddPost)
 	r.PUT("/post", handler.UpdatePost)
 	r.DELETE("/post/{id}", handler.DeletePost)
+	// Tag Handler
+	r.GET("/tag/{id}", handler.GetTag)
+	r.GET("/tags", handler.GetTags)
+	r.POST("/tag", handler.AddTag)
+	r.PUT("/tag", handler.UpdateTag)
+	r.DELETE("/tag/{id}", handler.DeleteTag)
 
 	// Serve static files from the ./public directory
 	r.NotFound = fasthttp.FSHandler("./public", 0) // http://localhost:8080/css/main.css

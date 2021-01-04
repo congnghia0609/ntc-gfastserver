@@ -100,12 +100,6 @@ func AddPost(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	bp, err := json.Marshal(p)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(string(bp))
-
 	dataResp := DataResp{Err: 0, Msg: "Add post successfully", Data: p}
 	resp, _ := json.Marshal(dataResp)
 	printJSON(ctx, string(resp))
@@ -123,12 +117,6 @@ func GetPost(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	bp, err := json.Marshal(p)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(string(bp))
-
 	dataResp := DataResp{Err: 0, Msg: "Get post successfully", Data: p}
 	resp, _ := json.Marshal(dataResp)
 	printJSON(ctx, string(resp))
@@ -137,7 +125,6 @@ func GetPost(ctx *fasthttp.RequestCtx) {
 // GetAllPosts api get all post
 func GetAllPosts(ctx *fasthttp.RequestCtx) {
 	posts := post.GetAllPost()
-
 	dataResp := DataResp{Err: 0, Msg: "Get all posts successfully", Data: posts}
 	resp, _ := json.Marshal(dataResp)
 	printJSON(ctx, string(resp))

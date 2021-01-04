@@ -12,6 +12,7 @@ import (
 	"log"
 	"ntc-gfastserver/mdb"
 	"ntc-gfastserver/post"
+	"strconv"
 	"time"
 
 	"github.com/congnghia0609/ntc-gconf/nconf"
@@ -110,6 +111,29 @@ func AddPost(ctx *fasthttp.RequestCtx) {
 	printJSON(ctx, string(resp))
 }
 
+// GetPost api get post
+func GetPost(ctx *fasthttp.RequestCtx) {
+	sid := ctx.UserValue("id").(string)
+	id, _ := strconv.ParseInt(sid, 10, 64)
+	p := post.GetPost(id)
+	if p.ID <= 0 {
+		dataResp := DataResp{Err: -1, Msg: "Post is not exist"}
+		resp, _ := json.Marshal(dataResp)
+		printJSON(ctx, string(resp))
+		return
+	}
+
+	bp, err := json.Marshal(p)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(bp))
+
+	dataResp := DataResp{Err: 0, Msg: "Get post successfully", Data: p}
+	resp, _ := json.Marshal(dataResp)
+	printJSON(ctx, string(resp))
+}
+
 // GetAllPosts api get all post
 func GetAllPosts(ctx *fasthttp.RequestCtx) {
 	posts := post.GetAllPost()
@@ -129,6 +153,7 @@ func StartWebServer(name string) {
 	r := router.New()
 	r.GET("/", Index)
 	r.GET("/hello/{name}", Hello)
+	r.GET("/post/{id}", GetPost)
 	r.GET("/posts", GetAllPosts)
 	r.POST("/post", AddPost)
 

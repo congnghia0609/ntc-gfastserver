@@ -11,8 +11,7 @@ build:
 	@go build -o $(NAME)
 
 .PHONY: run
-run:
-	@build
+run: build
 	@echo "Run project mode development..."
 	@./$(NAME) -e development
 

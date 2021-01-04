@@ -23,8 +23,8 @@ const (
 
 // Post struct
 type Post struct {
-	// ID        primitive.ObjectID `bson:"_id" json:"_id"`
-	ID        int64     `bson:"_id" json:"_id"`
+	// ID        primitive.ObjectID `bson:"_id" json:"id"`
+	ID        int64     `bson:"_id" json:"id"`
 	Title     string    `bson:"title" json:"title"`
 	Body      string    `bson:"body" json:"body"`
 	CreatedAt time.Time `bson:"created_at" json:"-"`

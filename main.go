@@ -9,11 +9,13 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	_ "net/http/pprof"
-	"ntc-gfastserver/mdb"
+	"ntc-gfastserver/server"
+	"os"
+	"os/signal"
 	"path/filepath"
 	"runtime"
-	"sync"
 	"syscall"
 
 	"github.com/congnghia0609/ntc-gconf/nconf"
@@ -53,42 +55,11 @@ func increaseLimit() {
 	log.Printf("rlimit.Cur = %d\n", rlimit.Cur)
 }
 
-// func main() {
-// 	////// -------------------- Init System -------------------- //////
-// 	// Increase resources limitations
-// 	increaseLimit()
-
-// 	// Init NConf
-// 	initNConf()
-
-// 	//// Init Logger
-// 	if "development" != nconf.GetEnv() {
-// 		log.Printf("============== LogFile: /data/log/ntc-gfastserver/ntc-gfastserver.log")
-// 		initLogger()
-// 	}
-
-// 	// Enable pprof hooks
-// 	go func() {
-// 		if err := http.ListenAndServe("localhost:6060", nil); err != nil {
-// 			log.Fatalf("pprof failed: %v", err)
-// 		}
-// 	}()
-
-// 	////// -------------------- Start WebServer -------------------- //////
-// 	// StartWebServer
-// 	go server.StartWebServer("webserver")
-
-// 	// Hang thread Main.
-// 	c := make(chan os.Signal, 1)
-// 	// We'll accept graceful shutdowns when quit via SIGINT (Ctrl+C) SIGKILL, SIGQUIT or SIGTERM (Ctrl+/) will not be caught.
-// 	signal.Notify(c, os.Interrupt)
-// 	// Block until we receive our signal.
-// 	<-c
-// 	log.Println("################# End Main #################")
-// }
-
 func main() {
 	////// -------------------- Init System -------------------- //////
+	// Increase resources limitations
+	increaseLimit()
+
 	// Init NConf
 	initNConf()
 
@@ -98,60 +69,91 @@ func main() {
 		initLogger()
 	}
 
-	// Code test here.
-	// 1. Insert
-	// p := post.Post{
-	// 	ID:        1,
-	// 	Title:     "title1",
-	// 	Body:      "body1",
-	// 	CreatedAt: time.Now(),
-	// 	UpdatedAt: time.Now(),
-	// }
-	// err := post.InsertPost(p)
-	// fmt.Println("err:", err)
-	// bp, err := json.Marshal(p)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// fmt.Println(string(bp))
+	// Enable pprof hooks
+	go func() {
+		if err := http.ListenAndServe("localhost:6060", nil); err != nil {
+			log.Fatalf("pprof failed: %v", err)
+		}
+	}()
 
-	// 2. Get post
-	// p := post.GetPost(3)
-	// bp, err := json.Marshal(p)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// fmt.Println(string(bp))
+	////// -------------------- Start WebServer -------------------- //////
+	// StartWebServer
+	go server.StartWebServer("webserver")
 
-	// 3. Get all post
-	// p := post.GetAllPost()
-	// bp, err := json.Marshal(p)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// fmt.Println(string(bp))
-
-	// 4. gen id
-	// id, _ := mdb.Next("ddd")
-	// log.Println("id gen:", id)
-
-	// 5. Benchmark nid gen
-	wg := new(sync.WaitGroup)
-	wg.Add(100)
-	for i := 0; i < 100; i++ {
-		go func() {
-			for j := 0; j < 100; j++ {
-				n, err := mdb.Next("benchmark")
-				if err != nil {
-					panic(err)
-				}
-				fmt.Println(n)
-			}
-			wg.Done()
-			fmt.Println("Done!!!")
-		}()
-	}
-	wg.Wait()
-
+	// Hang thread Main.
+	c := make(chan os.Signal, 1)
+	// We'll accept graceful shutdowns when quit via SIGINT (Ctrl+C) SIGKILL, SIGQUIT or SIGTERM (Ctrl+/) will not be caught.
+	signal.Notify(c, os.Interrupt)
+	// Block until we receive our signal.
+	<-c
 	log.Println("################# End Main #################")
 }
+
+// func main() {
+// 	////// -------------------- Init System -------------------- //////
+// 	// Init NConf
+// 	initNConf()
+
+// 	//// Init Logger
+// 	if "development" != nconf.GetEnv() {
+// 		log.Printf("============== LogFile: /data/log/ntc-gfastserver/ntc-gfastserver.log")
+// 		initLogger()
+// 	}
+
+// 	// Code test here.
+// 	// 1. Insert
+// 	// p := post.Post{
+// 	// 	ID:        1,
+// 	// 	Title:     "title1",
+// 	// 	Body:      "body1",
+// 	// 	CreatedAt: time.Now(),
+// 	// 	UpdatedAt: time.Now(),
+// 	// }
+// 	// err := post.InsertPost(p)
+// 	// fmt.Println("err:", err)
+// 	// bp, err := json.Marshal(p)
+// 	// if err != nil {
+// 	// 	fmt.Println(err)
+// 	// }
+// 	// fmt.Println(string(bp))
+
+// 	// 2. Get post
+// 	// p := post.GetPost(3)
+// 	// bp, err := json.Marshal(p)
+// 	// if err != nil {
+// 	// 	fmt.Println(err)
+// 	// }
+// 	// fmt.Println(string(bp))
+
+// 	// 3. Get all post
+// 	// p := post.GetAllPost()
+// 	// bp, err := json.Marshal(p)
+// 	// if err != nil {
+// 	// 	fmt.Println(err)
+// 	// }
+// 	// fmt.Println(string(bp))
+
+// 	// 4. gen id
+// 	// id, _ := mdb.Next("ddd")
+// 	// log.Println("id gen:", id)
+
+// 	// 5. Benchmark nid gen
+// 	// wg := new(sync.WaitGroup)
+// 	// wg.Add(100)
+// 	// for i := 0; i < 100; i++ {
+// 	// 	go func() {
+// 	// 		for j := 0; j < 100; j++ {
+// 	// 			n, err := mdb.Next("benchmark")
+// 	// 			if err != nil {
+// 	// 				panic(err)
+// 	// 			}
+// 	// 			fmt.Println(n)
+// 	// 		}
+// 	// 		wg.Done()
+// 	// 		fmt.Println("Done!!!")
+// 	// 	}()
+// 	// }
+// 	// wg.Wait()
+
+// 	log.Println("################# End Main #################")
+// }

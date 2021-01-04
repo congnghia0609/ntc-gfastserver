@@ -7,13 +7,24 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
+	"ntc-gfastserver/mdb"
+	"ntc-gfastserver/post"
+	"time"
 
 	"github.com/congnghia0609/ntc-gconf/nconf"
 	"github.com/fasthttp/router"
 	"github.com/valyala/fasthttp"
 )
+
+// DataResp is struct data response
+type DataResp struct {
+	Err  int         `json:"err"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data,omitempty"`
+}
 
 // Index handler
 func Index(ctx *fasthttp.RequestCtx) {
@@ -39,6 +50,67 @@ func Hello(ctx *fasthttp.RequestCtx) {
 	// ctx.SetBody([]byte("this is completely new body contents"))
 }
 
+func printJSON(ctx *fasthttp.RequestCtx, json string) {
+	ctx.Response.Header.Set("content-type", "application/json;charset=UTF-8")
+	ctx.SetStatusCode(fasthttp.StatusOK)
+	ctx.SetBodyString(json)
+}
+
+// AddPost api add post
+func AddPost(ctx *fasthttp.RequestCtx) {
+	params := make(map[string]interface{})
+	err := json.Unmarshal(ctx.PostBody(), &params)
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println("param:", params)
+	title := ""
+	if params["title"] != nil {
+		title = params["title"].(string)
+	}
+	body := ""
+	if params["body"] != nil {
+		body = params["body"].(string)
+	}
+	fmt.Println("title:", title)
+	fmt.Println("body:", body)
+	// Validate params
+	if len(title) == 0 || len(body) == 0 {
+		dataResp := DataResp{Err: -1, Msg: "Parameters invalid"}
+		resp, _ := json.Marshal(dataResp)
+		printJSON(ctx, string(resp))
+		return
+	}
+
+	id, _ := mdb.Next(post.TablePost)
+	p := post.Post{
+		ID:        id,
+		Title:     title,
+		Body:      body,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+	err1 := post.InsertPost(p)
+	if err1 != nil {
+		fmt.Println("err1:", err1)
+		dataResp := DataResp{Err: -1, Msg: "Add post fail"}
+		resp, _ := json.Marshal(dataResp)
+		printJSON(ctx, string(resp))
+		return
+	}
+
+	bp, err := json.Marshal(p)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(bp))
+
+	// dataResp := "{'err':'0','msg':'Add post successful'}"
+	dataResp := DataResp{Err: 0, Msg: "Add post successful", Data: p}
+	resp, _ := json.Marshal(dataResp)
+	printJSON(ctx, string(resp))
+}
+
 // StartWebServer start WebServer
 func StartWebServer(name string) {
 	// Config
@@ -49,6 +121,7 @@ func StartWebServer(name string) {
 	r := router.New()
 	r.GET("/", Index)
 	r.GET("/hello/{name}", Hello)
+	r.POST("/post", AddPost)
 
 	// Serve static files from the ./public directory
 	r.NotFound = fasthttp.FSHandler("./public", 0) // http://localhost:8080/css/main.css

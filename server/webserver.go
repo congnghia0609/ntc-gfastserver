@@ -191,6 +191,57 @@ func GetAllPosts(ctx *fasthttp.RequestCtx) {
 	printJSON(ctx, string(resp))
 }
 
+// GetPosts api get page post
+func GetPosts(ctx *fasthttp.RequestCtx) {
+	c := nconf.GetConfig()
+	paging := c.GetInt64("system.paging")
+
+	mapData := make(map[string]interface{})
+	isMore := false
+	posts := []post.Post{}
+	var page int64 = 1
+	pg, _ := ctx.QueryArgs().GetUint("page")
+	if pg > 0 {
+		page = int64(pg)
+	}
+	log.Println("page:", page)
+	mapData["page"] = page
+
+	total, _ := post.GetTotalPost()
+	// finish soon.
+	if total == 0 {
+		mapData["isMore"] = false
+		mapData["posts"] = posts
+		dataResp := DataResp{Err: 0, Msg: "Get all posts successfully", Data: mapData}
+		resp, _ := json.Marshal(dataResp)
+		printJSON(ctx, string(resp))
+		return
+	}
+
+	maxPage := (total-1)/paging + 1
+	// finish soon.
+	if page > maxPage {
+		mapData["isMore"] = false
+		mapData["posts"] = posts
+		dataResp := DataResp{Err: 0, Msg: "Get all posts successfully", Data: mapData}
+		resp, _ := json.Marshal(dataResp)
+		printJSON(ctx, string(resp))
+		return
+	}
+	// Get data paging.
+	if page < maxPage {
+		isMore = true
+	}
+	skip := (page - 1) * paging
+
+	posts = post.GetSlidePost(skip, paging)
+	mapData["isMore"] = isMore
+	mapData["posts"] = posts
+	dataResp := DataResp{Err: 0, Msg: "Get all posts successfully", Data: mapData}
+	resp, _ := json.Marshal(dataResp)
+	printJSON(ctx, string(resp))
+}
+
 // DeletePost api get post
 func DeletePost(ctx *fasthttp.RequestCtx) {
 	sid := ctx.UserValue("id").(string)
@@ -218,8 +269,9 @@ func StartWebServer(name string) {
 	r := router.New()
 	r.GET("/", Index)
 	r.GET("/hello/{name}", Hello)
+
 	r.GET("/post/{id}", GetPost)
-	r.GET("/posts", GetAllPosts)
+	r.GET("/posts", GetPosts)
 	r.POST("/post", AddPost)
 	r.PUT("/post", UpdatePost)
 	r.DELETE("/post/{id}", DeletePost)

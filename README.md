@@ -32,7 +32,7 @@ curl -X POST -i 'http://127.0.0.1:8080/post' \
 curl -X PUT -i 'http://127.0.0.1:8080/post' \
   -H "Content-Type: application/json" \
   --data '{
-  	"id": 1,
+    "id": 1,
     "title": "title1 update",
     "body": "body1 update"
   }'
@@ -44,9 +44,9 @@ curl -X PUT -i 'http://127.0.0.1:8080/post' \
 curl -X GET -H 'Content-Type: application/json' \
   -i 'http://127.0.0.1:8080/post/1'
 
-# Get all post
+# Get slide post
 curl -X GET -H 'Content-Type: application/json' \
-  -i 'http://127.0.0.1:8080/posts'
+  -i 'http://127.0.0.1:8080/posts?page=1'
 ```
 
 ### Delete Post

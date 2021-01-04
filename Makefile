@@ -12,6 +12,7 @@ build:
 
 .PHONY: run
 run:
+	@build
 	@echo "Run project mode development..."
 	@./$(NAME) -e development
 

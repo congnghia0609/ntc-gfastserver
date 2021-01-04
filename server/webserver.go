@@ -105,8 +105,16 @@ func AddPost(ctx *fasthttp.RequestCtx) {
 	}
 	fmt.Println(string(bp))
 
-	// dataResp := "{'err':'0','msg':'Add post successful'}"
-	dataResp := DataResp{Err: 0, Msg: "Add post successful", Data: p}
+	dataResp := DataResp{Err: 0, Msg: "Add post successfully", Data: p}
+	resp, _ := json.Marshal(dataResp)
+	printJSON(ctx, string(resp))
+}
+
+// GetAllPosts api get all post
+func GetAllPosts(ctx *fasthttp.RequestCtx) {
+	posts := post.GetAllPost()
+
+	dataResp := DataResp{Err: 0, Msg: "Get all posts successfully", Data: posts}
 	resp, _ := json.Marshal(dataResp)
 	printJSON(ctx, string(resp))
 }
@@ -121,6 +129,7 @@ func StartWebServer(name string) {
 	r := router.New()
 	r.GET("/", Index)
 	r.GET("/hello/{name}", Hello)
+	r.GET("/posts", GetAllPosts)
 	r.POST("/post", AddPost)
 
 	// Serve static files from the ./public directory

@@ -4,9 +4,14 @@
 ## Quick start
 ```bash
 # install library dependencies
-make deps
+#make deps
+go mod download
+
+# update go.mod file
+go mod tidy
 
 # build
+export GO111MODULE=on
 make build
 
 # start mode development

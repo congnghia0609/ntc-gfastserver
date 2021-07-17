@@ -8,6 +8,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/congnghia0609/ntc-gfastserver/mdb"
 	"github.com/congnghia0609/ntc-gfastserver/server"
 	"log"
 	"net/http"
@@ -76,6 +77,10 @@ func main() {
 			log.Fatalf("pprof failed: %v", err)
 		}
 	}()
+
+	// Init MongoDB
+	mdb.InitMongo()
+	defer mdb.MClose()
 
 	////// -------------------- Start WebServer -------------------- //////
 	// StartWebServer

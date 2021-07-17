@@ -8,8 +8,8 @@ package server
 
 import (
 	"fmt"
+	"github.com/congnghia0609/ntc-gfastserver/handler"
 	"log"
-	"ntc-gfastserver/handler"
 
 	"github.com/congnghia0609/ntc-gconf/nconf"
 	"github.com/fasthttp/router"

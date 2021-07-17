@@ -8,10 +8,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/congnghia0609/ntc-gfastserver/server"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
-	"ntc-gfastserver/server"
 	"os"
 	"os/signal"
 	"path/filepath"

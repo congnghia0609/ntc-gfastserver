@@ -9,8 +9,8 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/congnghia0609/ntc-gfastserver/tag"
 	"log"
-	"ntc-gfastserver/tag"
 	"time"
 
 	"github.com/congnghia0609/ntc-gconf/nconf"

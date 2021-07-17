@@ -9,9 +9,9 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/congnghia0609/ntc-gfastserver/mdb"
+	"github.com/congnghia0609/ntc-gfastserver/post"
 	"log"
-	"ntc-gfastserver/mdb"
-	"ntc-gfastserver/post"
 	"strconv"
 	"time"
 
